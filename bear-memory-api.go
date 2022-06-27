@@ -90,16 +90,20 @@ func main() {
 	if len(arrOfJson) > 0 {
 		fmt.Println(arrOfJson[0]["userId"])
 	}
-	db, err = sql.Open("postgres", "DATABASE_URL")
+	db, err = sql.Open("postgres", "postgres://rmfbqwqhgpyhsf:1a74f7e2002ba419e93f09831576d267f7212f8e349e3225ad9e31f411049ed9@ec2-23-23-151-191.compute-1.amazonaws.com:5432/daduj4br7pupke")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	if testPing := db.Ping(); testPing != nil {
 		log.Fatalln(testPing)
 	}
+	_, dberr := db.Exec("CREATE TABLE IF NOT EXISTS BearMemories (creationDate BIGINT, base64StringOfFile LONGTEXT);")
+	if dberr != nil {
+		log.Fatalln(dberr)
+	}
 	router := gin.Default()
 	router.GET("/bear-memory", getBearMemories)
 	router.POST("/bear-memory", postBearMemory)
 	router.GET("/bear-memory/:id", getBearMemory)
-	router.Run("localhost:8080")
+	router.Run("https://bear-app-server.herokuapp.com/")
 }
