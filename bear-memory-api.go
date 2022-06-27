@@ -1,0 +1,105 @@
+package main
+
+import (
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/heroku/x/hmetrics/onload"
+	_ "github.com/lib/pq"
+)
+
+var db *sql.DB
+
+type BearMemory struct {
+	CreationDate       int64  `json:"creationDate"`
+	Base64StringOfFile string `json:"base64StringOfFile"`
+}
+
+var allBearMemories = []BearMemory{
+	{Base64StringOfFile: "hello world", CreationDate: 19391},
+}
+
+func getBearMemory(c *gin.Context) {
+
+}
+
+func getBearMemories(c *gin.Context) {
+	fmt.Println(allBearMemories)
+	c.IndentedJSON(http.StatusOK, dbFunctionForGetMemory(db))
+}
+
+func postBearMemory(c *gin.Context) {
+	var newBearMemory BearMemory
+	err := c.BindJSON(&newBearMemory)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	res, er := db.Exec("INSERT INTO BearMemories (creationDate, base64StringOfFile) VALUES (" + string(rune(newBearMemory.CreationDate)) + ", " + newBearMemory.Base64StringOfFile + ";")
+	if er != nil {
+		log.Fatalln(er)
+	}
+	fmt.Println(res.LastInsertId())
+	c.IndentedJSON(http.StatusCreated, newBearMemory)
+}
+
+func dbFunctionForGetMemory(db *sql.DB) []BearMemory {
+
+	rows, err := db.Query("SELECT * FROM BearMemories;")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer rows.Close()
+	var allBearMemories []BearMemory
+	for rows.Next() {
+		var creationDate int64
+		var base64StringOfFile string
+		err := rows.Scan(&creationDate, &base64StringOfFile)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		var bearMemoryFromDB BearMemory = BearMemory{Base64StringOfFile: base64StringOfFile, CreationDate: creationDate}
+		allBearMemories = append(allBearMemories, bearMemoryFromDB)
+	}
+	return allBearMemories
+
+}
+func main() {
+	//fmt.Println("Hello, World!")
+	fmt.Println("This is my Go Server!")
+	var resp *http.Response
+	var err error
+	resp, err = http.Get("https://jsonplaceholder.typicode.com/posts")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	//  fmt.Println(string(bytes))
+	var arrOfJson []map[string]interface{}
+	err = json.Unmarshal(body, &arrOfJson)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	if len(arrOfJson) > 0 {
+		fmt.Println(arrOfJson[0]["userId"])
+	}
+	db, err = sql.Open("postgres", "DATABASE_URL")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	if testPing := db.Ping(); testPing != nil {
+		log.Fatalln(testPing)
+	}
+	router := gin.Default()
+	router.GET("/bear-memory", getBearMemories)
+	router.POST("/bear-memory", postBearMemory)
+	router.GET("/bear-memory/:id", getBearMemory)
+	router.Run("localhost:8080")
+}
