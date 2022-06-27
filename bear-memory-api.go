@@ -97,7 +97,7 @@ func main() {
 	if testPing := db.Ping(); testPing != nil {
 		log.Fatalln(testPing)
 	}
-	_, dberr := db.Exec("CREATE TABLE IF NOT EXISTS BearMemories (creationDate BIGINT, base64StringOfFile LONGTEXT);")
+	_, dberr := db.Exec("CREATE TABLE IF NOT EXISTS BearMemories (creationDate bigint, base64StringOfFile text);")
 	if dberr != nil {
 		log.Fatalln(dberr)
 	}
