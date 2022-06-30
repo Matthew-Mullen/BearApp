@@ -37,6 +37,7 @@ func postBearMemory(c *gin.Context) {
 	var newBearMemory BearMemory
 	err := c.BindJSON(&newBearMemory)
 	if err != nil {
+		fmt.Println("OK")
 		log.Fatalln(err)
 	}
 	res, er := db.Exec("INSERT INTO BearMemories (creationDate, base64StringOfFile) VALUES (" + string(rune(newBearMemory.CreationDate)) + ", " + newBearMemory.Base64StringOfFile + ";")
