@@ -65,6 +65,7 @@ func dbFunctionForGetMemory(db *sql.DB) []BearMemory {
 		var bearMemoryFromDB BearMemory = BearMemory{Base64StringOfFile: base64StringOfFile, CreationDate: creationDate}
 		allBearMemories = append(allBearMemories, bearMemoryFromDB)
 	}
+	allBearMemories = append(allBearMemories, BearMemory{Base64StringOfFile: "", CreationDate: 30})
 	return allBearMemories
 
 }
