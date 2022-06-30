@@ -71,7 +71,8 @@ func postBearMemory(c *gin.Context) {
 	content, _ := ioutil.ReadAll(reader)
 	encoded := base64.StdEncoding.EncodeToString(content)
 	newBearMemory.Base64StringOfFile = encoded
-	defer openedNewConvertedFile.Close()
+	openedNewConvertedFile.Close()
+	defer os.Remove(newFileName)
 	var sqlQueryString string = "INSERT INTO BearMemories (creationDate, base64StringOfFile) VALUES (" + fmt.Sprint(newBearMemory.CreationDate) + ", '" + newBearMemory.Base64StringOfFile + "');"
 	res, er := db.Exec(sqlQueryString)
 	if er != nil {
