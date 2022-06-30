@@ -41,8 +41,9 @@ func postBearMemory(c *gin.Context) {
 		fmt.Println("IS IT HERE")
 		log.Fatalln(err)
 	}
-	res, er := db.Exec("INSERT INTO BearMemories (creationDate, base64StringOfFile) VALUES (" + string(rune(newBearMemory.CreationDate)) + ", " + newBearMemory.Base64StringOfFile + ";")
+	res, er := db.Exec("INSERT INTO BearMemories (creationDate, base64StringOfFile) VALUES (" + fmt.Sprint(newBearMemory.CreationDate) + ", " + newBearMemory.Base64StringOfFile + ";")
 	if er != nil {
+		fmt.Println("BEAR BEHAVIOR")
 		log.Fatalln(er)
 	}
 	fmt.Println(res.LastInsertId())
