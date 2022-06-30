@@ -38,6 +38,11 @@ func getBearMemories(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, dbFunctionForGetMemory(db))
 }
 
+func deleteBearMemory(c *gin.Context) {
+	db.Query("DELETE from BearMemories WHERE creationDate=10000;")
+	c.IndentedJSON(http.StatusOK, BearMemory{Base64StringOfFile: "", CreationDate: 0})
+}
+
 func postBearMemory(c *gin.Context) {
 	var newBearMemory = BearMemory{}
 
@@ -136,5 +141,6 @@ func main() {
 	router.GET("/bear-memory", getBearMemories)
 	router.POST("/bear-memory", postBearMemory)
 	router.GET("/bear-memory/:id", getBearMemory)
+	router.DELETE("/bear-memory", deleteBearMemory)
 	router.Run()
 }
