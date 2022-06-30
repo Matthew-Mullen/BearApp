@@ -16,8 +16,8 @@ import (
 var db *sql.DB
 
 type BearMemory struct {
-	CreationDate       int    `json:"creationDate"`
-	Base64StringOfFile string `json:"base64StringOfFile"`
+	CreationDate       int    `json:"creationdate"`
+	Base64StringOfFile string `json:"base64stringoffile"`
 }
 
 var allBearMemories = []BearMemory{
@@ -36,7 +36,7 @@ func getBearMemories(c *gin.Context) {
 func postBearMemory(c *gin.Context) {
 	var newBearMemory = BearMemory{}
 
-	err := c.Bind(&newBearMemory)
+	err := c.BindJSON(&newBearMemory)
 	if err != nil {
 		log.Fatalln(err)
 	}
