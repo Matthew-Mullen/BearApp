@@ -16,8 +16,8 @@ import (
 var db *sql.DB
 
 type BearMemory struct {
-	CreationDate       int    `json:"creationdate"`
-	Base64StringOfFile string `json:"base64stringoffile"`
+	CreationDate       int    `json:"creationDate"`
+	Base64StringOfFile string `json:"base64StringOfFile"`
 }
 
 var allBearMemories = []BearMemory{
