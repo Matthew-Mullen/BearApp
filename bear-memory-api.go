@@ -16,7 +16,7 @@ import (
 var db *sql.DB
 
 type BearMemory struct {
-	CreationDate       int64  `json:"creationDate"`
+	CreationDate       int    `json:"creationDate"`
 	Base64StringOfFile string `json:"base64StringOfFile"`
 }
 
@@ -37,7 +37,6 @@ func postBearMemory(c *gin.Context) {
 	var newBearMemory BearMemory
 	err := c.BindJSON(&newBearMemory)
 	if err != nil {
-		fmt.Println("OK")
 		log.Fatalln(err)
 	}
 	res, er := db.Exec("INSERT INTO BearMemories (creationDate, base64StringOfFile) VALUES (" + string(rune(newBearMemory.CreationDate)) + ", " + newBearMemory.Base64StringOfFile + ";")
@@ -57,7 +56,7 @@ func dbFunctionForGetMemory(db *sql.DB) []BearMemory {
 	defer rows.Close()
 	var allBearMemories []BearMemory
 	for rows.Next() {
-		var creationDate int64
+		var creationDate int
 		var base64StringOfFile string
 		err := rows.Scan(&creationDate, &base64StringOfFile)
 		if err != nil {
