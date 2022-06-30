@@ -1,12 +1,17 @@
 package main
 
 import (
+	"bufio"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"
@@ -38,12 +43,34 @@ func postBearMemory(c *gin.Context) {
 
 	err := c.BindJSON(&newBearMemory)
 	if err != nil {
-		fmt.Println("IS IT HERE")
+		//fmt.Println("IS IT HERE")
 		log.Fatalln(err)
 	}
-	res, er := db.Exec("INSERT INTO BearMemories (creationDate, base64StringOfFile) VALUES (" + fmt.Sprint(newBearMemory.CreationDate) + ", '" + newBearMemory.Base64StringOfFile + "');")
+	var imageStringBeforeChangingFileType string = newBearMemory.Base64StringOfFile
+	now := time.Now()
+	dec, err := base64.StdEncoding.DecodeString(imageStringBeforeChangingFileType)
+	if err != nil {
+		panic(err)
+	}
+	var newFileName = "ImageForBearMemory" + fmt.Sprint(now.Nanosecond()) + fmt.Sprint(rand.Intn(100000)) + ".png"
+	f, err := os.Create(newFileName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer f.Close()
+	f.Write(dec)
+	openedNewConvertedFile, _ := os.Open(newFileName)
+
+	// Read entire png into new slice
+	reader := bufio.NewReader(openedNewConvertedFile)
+	content, _ := ioutil.ReadAll(reader)
+	encoded := base64.StdEncoding.EncodeToString(content)
+	newBearMemory.Base64StringOfFile = encoded
+	defer openedNewConvertedFile.Close()
+	var sqlQueryString string = "INSERT INTO BearMemories (creationDate, base64StringOfFile) VALUES (" + fmt.Sprint(newBearMemory.CreationDate) + ", '" + newBearMemory.Base64StringOfFile + "');"
+	res, er := db.Exec(sqlQueryString)
 	if er != nil {
-		fmt.Println("BEAR BEHAVIOR")
+		//fmt.Println("BEAR BEHAVIOR")
 		log.Fatalln(er)
 	}
 	fmt.Println(res.LastInsertId())
