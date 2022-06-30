@@ -35,7 +35,7 @@ func getBearMemories(c *gin.Context) {
 
 func postBearMemory(c *gin.Context) {
 	var newBearMemory = BearMemory{}
-	fmt.Println(c.Request.Body)
+
 	err := c.BindJSON(&newBearMemory)
 	if err != nil {
 		log.Fatalln(err)
