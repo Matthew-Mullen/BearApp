@@ -1,1 +1,0 @@
-https://bear-app-server.herokuapp.com/
