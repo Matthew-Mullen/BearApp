@@ -105,5 +105,5 @@ func main() {
 	router.GET("/bear-memory", getBearMemories)
 	router.POST("/bear-memory", postBearMemory)
 	router.GET("/bear-memory/:id", getBearMemory)
-	router.Run("https://bear-app-server.herokuapp.com/")
+	router.Run("https://bear-app-server.herokuapp.com/:8080")
 }
