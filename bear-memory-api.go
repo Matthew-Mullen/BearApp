@@ -85,7 +85,7 @@ func postBearMemory(c *gin.Context) {
 
 func dbFunctionForGetMemory(db *sql.DB) []BearMemory {
 
-	rows, err := db.Query("SELECT * FROM BearMemories;")
+	rows, err := db.Query("SELECT * FROM BearMemories ORDER BY creationDate ASC;")
 	if err != nil {
 		log.Fatalln(err)
 	}
