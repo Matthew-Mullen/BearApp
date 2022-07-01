@@ -44,7 +44,7 @@ func deleteBearMemory(c *gin.Context) {
 }
 
 func postBearMemory(c *gin.Context) {
-	start := time.Now()
+	//start := time.Now()
 	var newBearMemory = BearMemory{}
 
 	err := c.BindJSON(&newBearMemory)
@@ -81,8 +81,8 @@ func postBearMemory(c *gin.Context) {
 		log.Fatalln(er)
 	}
 	fmt.Println(res.LastInsertId())
-	elapsed := time.Since(start)
-	log.Printf("Binomial took %s", elapsed)
+	//elapsed := time.Since(start)
+	//log.Printf("Binomial took %s", elapsed)
 	c.IndentedJSON(http.StatusCreated, newBearMemory)
 }
 
