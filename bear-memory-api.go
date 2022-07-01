@@ -19,6 +19,9 @@ import (
 )
 
 var db *sql.DB
+var allValid = false
+var valid map[int]bool
+var nameToB64 map[int]string
 
 type BearMemory struct {
 	CreationDate       int    `json:"creationDate"`
@@ -36,7 +39,14 @@ func getBearMemory(c *gin.Context) {
 func getBearMemories(c *gin.Context) {
 	//fmt.Println(allBearMemories)
 	//c.IndentedJSON(http.StatusOK, dbFunctionForGetMemory(db))
-	c.IndentedJSON(http.StatusOK, allBearMemories)
+	if allValid {
+		c.IndentedJSON(http.StatusOK, allBearMemories)
+	} else {
+		dbFunctionForGetMemory(db)
+		allValid = true
+
+		c.IndentedJSON(http.StatusOK, allBearMemories)
+	}
 }
 
 func deleteBearMemory(c *gin.Context) {
@@ -84,10 +94,13 @@ func postBearMemory(c *gin.Context) {
 	fmt.Println(res.LastInsertId())
 	//elapsed := time.Since(start)
 	//log.Printf("Binomial took %s", elapsed)
+	//nameToB64[newBearMemory.CreationDate] = newBearMemory.Base64StringOfFile
+	//valid[newBearMemory.CreationDate] = false
+	allValid = false
 	c.IndentedJSON(http.StatusCreated, newBearMemory)
 }
 
-func dbFunctionForGetMemory(db *sql.DB) []BearMemory {
+func dbFunctionForGetMemory(db *sql.DB) {
 
 	rows, err := db.Query("SELECT * FROM BearMemories ORDER BY creationDate ASC;")
 	if err != nil {
@@ -106,7 +119,7 @@ func dbFunctionForGetMemory(db *sql.DB) []BearMemory {
 		allBearMemories = append(allBearMemories, bearMemoryFromDB)
 	}
 	allBearMemories = append(allBearMemories, BearMemory{Base64StringOfFile: "", CreationDate: 30})
-	return allBearMemories
+	//return allBearMemories
 
 }
 func main() {
@@ -143,7 +156,7 @@ func main() {
 		log.Fatalln(dberr)
 	}
 	router := gin.Default()
-	allBearMemories = dbFunctionForGetMemory(db)
+	dbFunctionForGetMemory(db)
 	router.GET("/bear-memory", getBearMemories)
 	router.POST("/bear-memory", postBearMemory)
 	router.GET("/bear-memory/:id", getBearMemory)
