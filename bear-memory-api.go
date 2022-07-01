@@ -42,6 +42,10 @@ func getBearMemories(c *gin.Context) {
 	if allValid {
 		c.IndentedJSON(http.StatusOK, allBearMemories)
 	} else {
+		allBearMemories = []BearMemory{
+			{Base64StringOfFile: "hello world", CreationDate: 19391},
+		}
+
 		dbFunctionForGetMemory(db)
 		allValid = true
 
@@ -51,6 +55,7 @@ func getBearMemories(c *gin.Context) {
 
 func deleteBearMemory(c *gin.Context) {
 	db.Query("DELETE from BearMemories WHERE creationDate=10000;")
+	allValid = false
 	c.IndentedJSON(http.StatusOK, BearMemory{Base64StringOfFile: "", CreationDate: 0})
 }
 
