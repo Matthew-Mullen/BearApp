@@ -34,8 +34,9 @@ func getBearMemory(c *gin.Context) {
 }
 
 func getBearMemories(c *gin.Context) {
-	fmt.Println(allBearMemories)
-	c.IndentedJSON(http.StatusOK, dbFunctionForGetMemory(db))
+	//fmt.Println(allBearMemories)
+	//c.IndentedJSON(http.StatusOK, dbFunctionForGetMemory(db))
+	c.IndentedJSON(http.StatusOK, allBearMemories)
 }
 
 func deleteBearMemory(c *gin.Context) {
@@ -142,6 +143,7 @@ func main() {
 		log.Fatalln(dberr)
 	}
 	router := gin.Default()
+	allBearMemories = dbFunctionForGetMemory(db)
 	router.GET("/bear-memory", getBearMemories)
 	router.POST("/bear-memory", postBearMemory)
 	router.GET("/bear-memory/:id", getBearMemory)
