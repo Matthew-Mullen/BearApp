@@ -107,7 +107,7 @@ func dbFunctionForGetMemory(db *sql.DB) {
 		log.Fatalln(err)
 	}
 	defer rows.Close()
-	var allBearMemories []BearMemory
+	//var allBearMemories []BearMemory
 	for rows.Next() {
 		var creationDate int
 		var base64StringOfFile string
